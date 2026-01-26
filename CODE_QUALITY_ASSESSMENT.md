@@ -81,28 +81,30 @@ float getRotationAngle() const;
 
 ### 3. **Code Quality Issues** (6/10)
 
-#### a) **CMakeLists.txt Inconsistencies**
+#### a) **CMakeLists.txt Inconsistencies** ✅ FIXED
 ```cmake
-# Lines 42-64: Header files listed in SOURCE_FILES
+# Original (Lines 42-64):
 set(HEADER_FILES
     include/CarChooseState.h
     ...
-    vendors/ai/Utility/Utility.cpp  # ⚠️ .cpp in HEADER_FILES
-    vendors/ai/NeuralNetwork/NeuralNetwork.cpp  # ⚠️ .cpp in HEADER_FILES
-    src/GameStateParent.cpp  # ⚠️ .cpp in HEADER_FILES
-    include/GameStateParent.h  # ⚠️ Duplicated
+    vendors/ai/Utility/Utility.cpp  # ⚠️ .cpp in HEADER_FILES - FIXED
+    vendors/ai/NeuralNetwork/NeuralNetwork.cpp  # ⚠️ .cpp in HEADER_FILES - FIXED
+    src/GameStateParent.cpp  # ⚠️ .cpp in HEADER_FILES - FIXED
+    include/GameStateParent.h  # ⚠️ Duplicated - FIXED
 )
 ```
+**Status: FIXED** - Header files now only contain .h files, duplicates removed, source files added to SOURCE_FILES.
 
-#### b) **Magic Numbers**
+#### b) **Logic Errors** ✅ FIXED
 ```cpp
-// Car.cpp line 73
+// Car.cpp line 73 - FIXED
 velocity = (max_speed > max_speed) ? forward_direction * max_speed : velocity;
-// ⚠️ This condition is always false (comparing max_speed to itself)
+// ⚠️ This condition is always false (comparing max_speed to itself) - REMOVED
 
-// Game.cpp line 31
-window.setFramerateLimit(144);  // ⚠️ Magic number, conflicts with earlier VSync setting
+// Game.cpp line 31 - FIXED
+window.setFramerateLimit(144);  // ⚠️ Magic number, conflicts with earlier VSync setting - REMOVED
 ```
+**Status: FIXED** - Redundant line removed from Car.cpp, hardcoded framerate limit removed from Game.cpp.
 
 #### c) **Inconsistent Error Handling**
 ```cpp
@@ -157,18 +159,18 @@ namespace ResourceKeys {
 
 ## Critical Issues 🚨
 
-### 1. **Logic Error in Car.cpp**
+### 1. **Logic Error in Car.cpp** ✅ FIXED
 ```cpp
-// Line 73
+// Original (Line 73) - BROKEN:
 velocity = (max_speed > max_speed) ? forward_direction * max_speed : velocity;
-```
-This condition `max_speed > max_speed` is **always false**. Should probably be:
-```cpp
-velocity = (speed > max_speed) ? forward_direction * max_speed : velocity;
+// This condition `max_speed > max_speed` is **always false**
 ```
 
-### 2. **Framerate Limit Conflict**
+**Status: FIXED** - The redundant line has been removed as the speed clamping is already properly handled by the preceding if statement that checks `if (speed > max_speed)`.
+
+### 2. **Framerate Limit Conflict** ✅ FIXED
 ```cpp
+// Original - BROKEN:
 // Game.cpp
 window.setVerticalSyncEnabled(VariableManager::getVSync());  // Line 17
 window.setFramerateLimit(VariableManager::getFpsLimit());     // Line 18
@@ -176,8 +178,24 @@ window.setFramerateLimit(VariableManager::getFpsLimit());     // Line 18
 window.setFramerateLimit(144);  // Line 31 - Overrides previous setting!
 ```
 
-### 3. **Missing const Correctness**
-Many getter functions that should be const are not marked as const.
+**Status: FIXED** - Removed the hardcoded `window.setFramerateLimit(144)` call. Now respects the FPS limit from configuration.
+
+### 3. **CMakeLists.txt Inconsistencies** ✅ FIXED
+```cmake
+# Original - BROKEN:
+set(HEADER_FILES
+    ...
+    vendors/ai/Utility/Utility.cpp  # ⚠️ .cpp in HEADER_FILES
+    vendors/ai/NeuralNetwork/NeuralNetwork.cpp  # ⚠️ .cpp in HEADER_FILES
+    src/GameStateParent.cpp  # ⚠️ .cpp in HEADER_FILES
+    include/GameStateParent.h  # ⚠️ Duplicated
+)
+```
+
+**Status: FIXED** - Cleaned up HEADER_FILES to only include .h files, removed duplicates, and added missing source files to SOURCE_FILES.
+
+### 4. **Missing const Correctness**
+Many getter functions that should be const are not marked as const. This is a minor issue but worth addressing for better code quality.
 
 ---
 
@@ -214,9 +232,9 @@ Many getter functions that should be const are not marked as const.
 ## Recommendations 🎯
 
 ### High Priority
-1. **Fix logic errors** in Car.cpp and Game.cpp
-2. **Add unit tests** with a framework like Google Test or Catch2
-3. **Clean up CMakeLists.txt** - remove .cpp files from HEADER_FILES
+1. ✅ **COMPLETED: Fixed logic errors** in Car.cpp and Game.cpp
+2. ✅ **COMPLETED: Cleaned up CMakeLists.txt** - removed .cpp files from HEADER_FILES
+3. **Add unit tests** with a framework like Google Test or Catch2
 4. **Add error handling** to resource loading functions
 5. **Document the AI architecture** - explain how the neural network learns
 
