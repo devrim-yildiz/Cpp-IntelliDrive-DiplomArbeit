@@ -70,7 +70,8 @@ void Car::update(float dt) {
     if (speed > max_speed) {
         velocity = (velocity / speed) * max_speed;
     }
-    velocity = (max_speed > max_speed) ? forward_direction * max_speed : velocity;
+    // This line was previously: velocity = (max_speed > max_speed) ? ... which was always false
+    // Removed as the speed clamping is already handled in the if statement above
 
     // Setting the new position
     current_position += velocity * dt;

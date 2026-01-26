@@ -25,6 +25,7 @@ set(SOURCE_FILES
         src/LevelSelectState.cpp
         src/Tile.cpp
         src/GameState.cpp
+        src/GameStateParent.cpp
         src/AiGameState.cpp
         src/SettingsState.cpp
         src/MetricsManager.cpp
@@ -35,6 +36,7 @@ set(SOURCE_FILES
         src/MenuState.cpp
         src/PauseState.cpp
         src/DeathState.cpp
+        src/VariableManager.cpp
         vendors/ai/Utility/Utility.cpp
         vendors/ai/NeuralNetwork/NeuralNetwork.cpp
 )
@@ -54,13 +56,10 @@ set(HEADER_FILES
         include/MenuState.h
         include/PauseState.h
         include/DeathState.h
-        vendors/ai/Utility/Utility.cpp
-        vendors/ai/NeuralNetwork/NeuralNetwork.cpp
-        src/GameStateParent.cpp
-        include/GameStateParent.h
         include/GameStateParent.h
         include/VariableManager.h
-        src/VariableManager.cpp
+        vendors/ai/Utility/Utility.h
+        vendors/ai/NeuralNetwork/NeuralNetwork.h
 )
 
 # Add the main executable target

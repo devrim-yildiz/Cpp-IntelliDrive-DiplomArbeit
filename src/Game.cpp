@@ -13,7 +13,7 @@ Game::Game() : window(sf::VideoMode(1920, 1080), "IntelliDrive", sf::Style::Full
     // Resource Manager
     ResourceManager::loadAllKnownResources();
 
-    // Apply VSync and FPS limit
+    // Apply VSync and FPS limit from configuration
     window.setVerticalSyncEnabled(VariableManager::getVSync());
     window.setFramerateLimit(VariableManager::getFpsLimit());
 
@@ -27,8 +27,6 @@ Game::Game() : window(sf::VideoMode(1920, 1080), "IntelliDrive", sf::Style::Full
     initializeText(fpsText, 100.f, 100.f);
     initializeText(avgText, 100.f, 140.f);
     initializeText(lowsText, 100.f, 170.f);
-
-    window.setFramerateLimit(144);
 }
 
 Game::~Game() {
