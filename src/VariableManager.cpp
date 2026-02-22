@@ -2,7 +2,9 @@
 // Created by Tobias on 14.01.2025.
 //
 
-#include "VariableManager.h"// Physics
+#include "VariableManager.h"
+
+// Physics
 float VariableManager::MAX_ACCELERATION_CONSTANT = 800.0f; // Units: pixels per second squared
 float VariableManager::MAX_ANGULAR_ACCELERATION_CONSTANT = 200.0f; // Units: degrees per second squared
 float VariableManager::MAX_SPEED = 450.0f; // Units: pixels per second
