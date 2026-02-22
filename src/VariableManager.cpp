@@ -40,9 +40,9 @@ int VariableManager::NETWORKS_AMOUNT = 200;
 float VariableManager::AI_INITIAL_RANDOM_VALUES_MAX = 1.6f;
 bool VariableManager::AI_INITIAL_RANDOM_VALUES_UNIFORM = true;
 std::vector<int> VariableManager::AI_TOPOLOGY = {RAY_AMOUNT, 6, OUTPUT_NEURONS};
-std::vector<Utility::Activations> VariableManager::AI_ACTIVATIONS = {
-        Utility::Activations::Tanh,
-        Utility::Activations::Tanh
+std::vector<Activations> VariableManager::AI_ACTIVATIONS = {
+        Activations::Tanh,
+        Activations::Tanh
 };
 
 // Evolutionary Algorithm

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.16)
 project(IntelliDrive VERSION 0.1.0)
 
 # Set C++ standard to C++17
@@ -14,8 +14,21 @@ set(SFML_BUILD_SHARED_LIBS TRUE CACHE BOOL "Build SFML as shared libraries" FORC
 # Build SFML
 add_subdirectory(vendors/sfml/ vendors/sfml_build/)
 
-# Find ArrayFire
-find_package(ArrayFire REQUIRED)
+# Find ArrayFire (OPTIONAL - project works without it)
+find_package(ArrayFire QUIET)
+
+if(ArrayFire_FOUND)
+    message(STATUS "ArrayFire found - building with GPU backend support")
+else()
+    message(STATUS "ArrayFire NOT found - building with CPU backend only")
+endif()
+
+# Compute abstraction layer sources
+set(COMPUTE_FILES
+        src/compute/Tensor.cpp
+        src/compute/CPUBackend.cpp
+        src/compute/BackendFactory.cpp
+)
 
 # Explicitly list all source files
 set(SOURCE_FILES
@@ -35,59 +48,39 @@ set(SOURCE_FILES
         src/MenuState.cpp
         src/PauseState.cpp
         src/DeathState.cpp
-        vendors/ai/Utility/Utility.cpp
-        vendors/ai/NeuralNetwork/NeuralNetwork.cpp
-)
-
-set(HEADER_FILES
-        include/CarChooseState.h
-        include/LevelCreator.h
-        include/LevelSelectState.h
-        include/Tile.h
-        include/AiGameState.h
-        include/SettingsState.h
-        include/MetricsManager.h
-        include/DropDown.h
-        include/Game.h
-        include/Car.h
-        include/ResourceManager.h
-        include/MenuState.h
-        include/PauseState.h
-        include/DeathState.h
-        vendors/ai/Utility/Utility.cpp
-        vendors/ai/NeuralNetwork/NeuralNetwork.cpp
         src/GameStateParent.cpp
-        include/GameStateParent.h
-        include/GameStateParent.h
-        include/VariableManager.h
         src/VariableManager.cpp
+        vendors/ai/Utility/Utility.cpp
+        vendors/ai/NeuralNetwork/NeuralNetwork.cpp
+        ${COMPUTE_FILES}
 )
 
 # Add the main executable target
-add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES})
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 # Include directories
 target_include_directories(${PROJECT_NAME}
         PRIVATE
         ${PROJECT_SOURCE_DIR}/include/
         ${PROJECT_SOURCE_DIR}/vendors/sfml/include/
-        ${ArrayFire_INCLUDE_DIRS} # Include ArrayFire
+        ${PROJECT_SOURCE_DIR}/vendors/
+        ${PROJECT_SOURCE_DIR}/vendors/ai/
 )
 
-# Include directories
-include_directories(${AF_PATH}/include)
-
-# Link directories (if necessary)
-link_directories(${AF_PATH}/lib)
-
-# Link SFML and ArrayFire libraries
+# Link SFML libraries
 target_link_libraries(${PROJECT_NAME}
         PRIVATE
         sfml-graphics
         sfml-window
         sfml-system
-        ${ArrayFire_LIBRARIES} # Link ArrayFire
 )
+
+# Conditionally add ArrayFire support
+if(ArrayFire_FOUND)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${ArrayFire_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${ArrayFire_LIBRARIES})
+    target_compile_definitions(${PROJECT_NAME} PRIVATE HAS_ARRAYFIRE)
+endif()
 
 # Define the resource directory
 set(RESOURCE_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resources)
@@ -137,3 +130,30 @@ if (MSVC)
         string(REPLACE "/MDd" "/MD" ${flag_var} "${${flag_var}}")
     endforeach()
 endif()
+
+# ==========================================
+# Tests (standalone, no SFML dependency)
+# ==========================================
+enable_testing()
+
+add_executable(IntelliDriveTests
+        tests/test_main.cpp
+        ${COMPUTE_FILES}
+        vendors/ai/Utility/Utility.cpp
+        vendors/ai/NeuralNetwork/NeuralNetwork.cpp
+)
+
+target_include_directories(IntelliDriveTests
+        PRIVATE
+        ${PROJECT_SOURCE_DIR}/include/
+        ${PROJECT_SOURCE_DIR}/vendors/
+        ${PROJECT_SOURCE_DIR}/vendors/ai/
+)
+
+if(ArrayFire_FOUND)
+    target_include_directories(IntelliDriveTests PRIVATE ${ArrayFire_INCLUDE_DIRS})
+    target_link_libraries(IntelliDriveTests PRIVATE ${ArrayFire_LIBRARIES})
+    target_compile_definitions(IntelliDriveTests PRIVATE HAS_ARRAYFIRE)
+endif()
+
+add_test(NAME ComputeTests COMMAND IntelliDriveTests)

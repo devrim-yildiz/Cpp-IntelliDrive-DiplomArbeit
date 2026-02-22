@@ -8,9 +8,9 @@
 // Includes
 #include "Car.h"
 #include "../vendors/json/json.hpp"
-#include "../vendors/ai/NeuralNetwork/NeuralNetwork.h"
+#include "compute/Activations.h"
 #include <unordered_map>
-#include <tile.h>
+#include "Tile.h"
 #include <fstream>
 #include <vector>
 
@@ -58,7 +58,7 @@ private:
     static std::vector<int> AI_TOPOLOGY;
     static float AI_INITIAL_RANDOM_VALUES_MAX;
     static bool AI_INITIAL_RANDOM_VALUES_UNIFORM;
-    static std::vector<Utility::Activations> AI_ACTIVATIONS;
+    static std::vector<Activations> AI_ACTIVATIONS;
 
     // Evolutionary Algorithm
     static int AI_WINNERS;
@@ -89,8 +89,8 @@ private:
 public:
 
     /// Load and Save functions
-    static void VariableManager::loadFromJson(const std::string& filePath);
-    static void VariableManager::saveToJson(const std::string& filePath);
+    static void loadFromJson(const std::string& filePath);
+    static void saveToJson(const std::string& filePath);
 
     /// Getter and Setter functions
 
@@ -171,8 +171,8 @@ public:
     static std::vector<int> &getAiTopology() { return AI_TOPOLOGY; }
     static void setAiTopology(std::vector<int> &value) { AI_TOPOLOGY = value; }
 
-    static std::vector<Utility::Activations> &getAiActivations() { return AI_ACTIVATIONS; }
-    static void setAiActivations(std::vector<Utility::Activations> &value) { AI_ACTIVATIONS = value; }
+    static std::vector<Activations> &getAiActivations() { return AI_ACTIVATIONS; }
+    static void setAiActivations(std::vector<Activations> &value) { AI_ACTIVATIONS = value; }
 
     static float getAiInitialRandomValuesMax() { return AI_INITIAL_RANDOM_VALUES_MAX; }
     static void setAiInitialRandomValuesMax(float value) { AI_INITIAL_RANDOM_VALUES_MAX = value; }

@@ -21,16 +21,21 @@ jobs:
       - name: Create Build Environment
         run: cmake -E make_directory ${{github.workspace}}/build
 
-      - name: Get dependencies
+      - name: Get dependencies (Linux)
         if: matrix.os == 'ubuntu-latest'
-        run: sudo apt update && sudo apt install -y libudev-dev libopenal-dev libvorbis-dev libflac-dev libxrandr-dev libfreetype6-dev make libgl1-mesa-dev libxcursor-dev
+        run: sudo apt update && sudo apt install -y libudev-dev libopenal-dev libvorbis-dev libflac-dev libxrandr-dev libfreetype6-dev make libgl1-mesa-dev libxcursor-dev libxi-dev
 
       - name: Configure CMake
         shell: bash
         working-directory: ${{github.workspace}}/build
         run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
-      - name: Build
+      - name: Build Tests
         working-directory: ${{github.workspace}}/build
         shell: bash
-        run: cmake --build . --config $BUILD_TYPE
+        run: cmake --build . --config $BUILD_TYPE --target IntelliDriveTests
+
+      - name: Run Tests
+        working-directory: ${{github.workspace}}/build
+        shell: bash
+        run: ctest -C $BUILD_TYPE --output-on-failure
