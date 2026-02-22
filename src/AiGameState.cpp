@@ -491,11 +491,11 @@ void AiGameState::updateAI() {
             inputData[i * raySize + r] = players[i].rayDistances[r];
         }
     }
-    af::array inputAf(raySize, 1, VariableManager::getNetworksAmount(), inputData.data());
-    af::array outputAf = network.feed_forward(inputAf);
-    int outputNeurons = (int)outputAf.dims()[0];
+    Tensor inputTensor(raySize, 1, VariableManager::getNetworksAmount(), 1, inputData);
+    Tensor outputTensor = network.feed_forward(inputTensor);
+    int outputNeurons = outputTensor.dim(0);
     std::vector<float> outputVec(outputNeurons * VariableManager::getNetworksAmount(), 0.0f);
-    outputAf.host(outputVec.data());
+    outputTensor.host(outputVec.data());
 
 
     for (int playerIDX = 0; playerIDX < VariableManager::getNetworksAmount(); ++playerIDX) {

@@ -17,7 +17,6 @@
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "State.h"
 #include "ResourceManager.h"
-#include "../vendors/ai/NeuralNetwork/NeuralNetwork.h"
 
 class Game {
 public:

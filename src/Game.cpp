@@ -5,6 +5,7 @@
 #include "../include/Game.h"
 #include "../include/MenuState.h"
 #include "../include/ResourceManager.h"
+#include "compute/BackendFactory.h"
 
 Game::Game() : window(sf::VideoMode(1920, 1080), "IntelliDrive", sf::Style::Fullscreen)
 {
@@ -18,7 +19,7 @@ Game::Game() : window(sf::VideoMode(1920, 1080), "IntelliDrive", sf::Style::Full
     window.setFramerateLimit(VariableManager::getFpsLimit());
 
     car = {};
-    Utility::setup();
+    BackendFactory::create();
     loadCarData("resources/config/cars.csv");
     std::cout << "[DEBUG] Loading tiles from CSV\n";
     car.applyData(cars[0]);
